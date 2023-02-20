@@ -11,6 +11,9 @@
 (require 'use-package)
 (setq use-package-always-ensure t)
 
+(setq backup-directory-alist
+      `((".*" . ,temporary-file-directory)))
+
 (setq inhibit-startup-message t)
 
 (scroll-bar-mode -1)
@@ -25,6 +28,10 @@
 (setq scroll-margin 0
       scroll-conservatively 100000
       scroll-preserve-screen-position 1)
+
+
+(add-hook 'prog-mode-hook 'display-line-numbers-mode)
+(setq display-line-numbers 'relative)
 
 (cond
  ((find-font (font-spec :name "Iosevka"))
@@ -41,11 +48,31 @@
 
 (delete-selection-mode t)
 
+(defun split-horizontal-and-move-cursor()
+  (interactive)
+  (split-window-right)
+  (other-window 1))
+
+(defun split-vertical-and-move-cursor()
+  (interactive)
+  (split-window-below)
+  (other-window 1))
+
+(bind-key (kbd "C-x 3") 'split-horizontal-and-move-cursor)
+(bind-key (kbd "C-x 2") 'split-vertical-and-move-cursor)
+
 ;; TODO learn hippie-expand
 
 (global-set-key (kbd "C-x C-b") #'ibuffer)
 
 (setq tab-always-indent 'complete)
+
+(use-package diminish
+  :config
+  (diminish 'abbrev-mode)
+  (diminish 'flyspell-mode)
+  (diminish 'flyspell-prog-mode)
+  (diminish 'eldoc-mode))
 
 (use-package elec-pair
   :config
@@ -62,7 +89,11 @@
   :config
   (setq whitespace-style '(face tabs empty trailing)))
 
-;; TODO avy
+(use-package avy
+  :bind (("C-c ." . avy-goto-word-or-subword-1)
+         ("C-c ," . avy-goto-char))
+  :config
+  (setq avy-background t))
 
 (use-package expand-region
   :bind ("C-=" . er/expand-region))
@@ -74,21 +105,35 @@
 
 (use-package rainbow-delimiters
   :config
-  (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
+  (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
+  (diminish 'rainbow-delimiters-mode))
 
 (use-package rainbow-mode
   :hook
-  (prog-mode-hook . rainbow-mode))
-
-(use-package doom-themes
+  (prog-mode-hook . rainbow-mode)
   :config
-  (load-theme 'doom-gruvbox t))
+  (diminish 'rainbow-mode))
+
+(use-package doom-themes)
+
+(use-package zenburn-theme
+  :config
+  (load-theme 'zenburn t))
 
 (use-package magit)
 
+(use-package projectile
+  :init
+  (setq projectile-project-search-path '("~/code" "~/school"))
+  :config
+  (global-set-key (kbd "C-c p") 'projectile-command-map)
+  (projectile-mode 1)
+  (diminish 'projectile-mode))
+
 (use-package which-key
   :config
-  (which-key-mode))
+  (which-key-mode)
+  (diminish 'which-key-mode))
 
 (use-package marginalia
   :init
@@ -105,10 +150,11 @@
         completion-category-defaults nil
         completion-category-overrides '((file (styles partial-completion)))))
 
-;; TODO enable this when it actually works
-;; (use-package consult
-;;   :bind
-;;   (("C-x b" . consult-buffer)))
+(use-package consult
+  :bind
+  (("C-x b" . consult-buffer)
+   ("M-g g" . consult-goto-line)
+   ("M-g M-g" . consult-goto-line)))
 
 (use-package hl-todo
   :config
@@ -121,7 +167,15 @@
 
 (use-package undo-tree
   :config
-  (global-undo-tree-mode +1))
+  (setq undo-tree-history-directory-alist
+        `((".*" . ,temporary-file-directory)))
+  (global-undo-tree-mode +1)
+  (diminish 'undo-tree-mode))
+
+(use-package ace-window
+  :config
+  (global-set-key (kbd "C-x w") 'ace-window)
+  (global-set-key [remap other-window] 'ace-window))
 
 (use-package tree-sitter-langs)
 (use-package tree-sitter)
@@ -138,8 +192,14 @@
 (use-package lsp-ui
   :commands lsp-ui-mode)
 
+(use-package org-bullets
+  :config
+  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+
 (setq-default c-basic-style "linux"
               c-basic-offset 4)
+
+(setq tramp-default-method "ssh")
 
 (when (and (eq system-type 'gnu/linux)
            (getenv "WSLENV"))
@@ -160,7 +220,7 @@
    '("e3daa8f18440301f3e54f2093fe15f4fe951986a8628e98dcd781efbec7a46f2" "60ada0ff6b91687f1a04cc17ad04119e59a7542644c7c59fc135909499400ab8" "443e2c3c4dd44510f0ea8247b438e834188dc1c6fb80785d83ad3628eadf9294" default))
  '(org-agenda-files '("~/school/T8/school.org"))
  '(package-selected-packages
-   '(lsp-mode lsp-ui tree-sitter-langs tree-sitter undo-tree zop-to-char hl-todo consult rainbow-mode rainbow-delimiters move-text expand-region zenburn-theme which-key magit)))
+   '(ace-window diminish org-bullets projectile avy lsp-mode lsp-ui tree-sitter-langs tree-sitter undo-tree zop-to-char hl-todo consult rainbow-mode rainbow-delimiters move-text expand-region zenburn-theme which-key magit)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
