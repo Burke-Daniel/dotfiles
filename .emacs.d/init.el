@@ -29,9 +29,8 @@
       scroll-conservatively 100000
       scroll-preserve-screen-position 1)
 
-
-(add-hook 'prog-mode-hook 'display-line-numbers-mode)
-(setq display-line-numbers 'relative)
+(global-display-line-numbers-mode)
+(setq display-line-numbers-type 'relative)
 
 (cond
  ((find-font (font-spec :name "Iosevka"))
@@ -114,11 +113,11 @@
   :config
   (diminish 'rainbow-mode))
 
-(use-package doom-themes)
-
-(use-package zenburn-theme
+(use-package doom-themes
   :config
-  (load-theme 'zenburn t))
+  (load-theme 'doom-tokyo-night t))
+
+(use-package zenburn-theme)
 
 (use-package magit)
 
@@ -196,8 +195,29 @@
   :config
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
 
-(setq-default c-basic-style "linux"
-              c-basic-offset 4)
+(use-package evil
+  :init
+  (setq evil-want-C-u-scroll t)
+  :config
+  (evil-mode +1))
+
+(when evil-want-C-u-scroll
+  (define-key evil-insert-state-map (kbd "C-u") 'evil-scroll-up)
+  (define-key evil-normal-state-map (kbd "C-u") 'evil-scroll-up)
+  (define-key evil-visual-state-map (kbd "C-u") 'evil-scroll-up)
+  (define-key evil-motion-state-map (kbd "C-u") 'evil-scroll-up))
+
+(use-package multiple-cursors
+  :config
+  (global-set-key (kbd "C-M-c") 'mc/edit-lines)
+  (global-set-key (kbd "C->") 'mc/mark-next-like-this)
+  (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+  (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this))
+
+(setq-default c-default-style "linux"
+              c-basic-offset 4
+              tab-width 4
+              indent-tabs-mode nil)
 
 (setq tramp-default-method "ssh")
 
@@ -220,7 +240,7 @@
    '("e3daa8f18440301f3e54f2093fe15f4fe951986a8628e98dcd781efbec7a46f2" "60ada0ff6b91687f1a04cc17ad04119e59a7542644c7c59fc135909499400ab8" "443e2c3c4dd44510f0ea8247b438e834188dc1c6fb80785d83ad3628eadf9294" default))
  '(org-agenda-files '("~/school/T8/school.org"))
  '(package-selected-packages
-   '(ace-window diminish org-bullets projectile avy lsp-mode lsp-ui tree-sitter-langs tree-sitter undo-tree zop-to-char hl-todo consult rainbow-mode rainbow-delimiters move-text expand-region zenburn-theme which-key magit)))
+   '(multiple-cursors ace-window diminish org-bullets projectile avy lsp-mode lsp-ui tree-sitter-langs tree-sitter undo-tree zop-to-char hl-todo consult rainbow-mode rainbow-delimiters move-text expand-region zenburn-theme which-key magit)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
