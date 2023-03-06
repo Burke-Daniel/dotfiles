@@ -11,17 +11,6 @@ lsp.setup_servers({
 	'rust_analyzer',
 })
 
-local cmp = require('cmp')
-local cmp_select = { behavior = cmp.SelectBehavior.Select }
-lsp.setup_nvim_cmp({
-    mapping = cmp.mapping.preset.insert({
-        ['<C-p>'] = cmp.mapping.select_prev_item(cmp_select),
-        ['<C-n>'] = cmp.mapping.select_next_item(cmp_select),
-        ['<C-y>'] = cmp.mapping.confirm({ select = true }),
-        ['<C-space>'] = cmp.mapping.confirm({ select = true}),
-    })
-})
-
 lsp.set_preferences({
 	sign_icons = { }
 })

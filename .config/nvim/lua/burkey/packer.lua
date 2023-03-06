@@ -8,14 +8,14 @@ return require('packer').startup(function(use)
         requires = { {'nvim-lua/plenary.nvim'} }
     })
     use('folke/tokyonight.nvim')
-    use({ "ellisonleao/gruvbox.nvim" })
+    use("ellisonleao/gruvbox.nvim")
     use('nvim-treesitter/nvim-treesitter', { run = ':TSUpdate' })
     use('nvim-treesitter/playground')
     use('mbbill/undotree')
     use('tpope/vim-fugitive')
     use('tpope/vim-commentary')
     use('tpope/vim-surround')
-    use {
+    use({
         'VonHeikemen/lsp-zero.nvim',
         branch = 'v1.x',
         requires = {
@@ -36,7 +36,7 @@ return require('packer').startup(function(use)
 			{'L3MON4D3/LuaSnip'},             -- Required
 			{'rafamadriz/friendly-snippets'}, -- Optional
 		}
-	}
+	})
     use('christoomey/vim-tmux-navigator')
     use('jceb/vim-orgmode')
 end)
